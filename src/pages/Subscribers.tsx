@@ -34,7 +34,9 @@ export default function Subscribers() {
       {isLoading && <p>Loading…</p>}
       {error && <p className="text-destructive">User not found</p>}
 
-      {data && <RouterTable matches={data.matches} username={data.username} />}
+      {data && !error && (
+        <RouterTable matches={data.matches} username={data.username} />
+      )}
 
       {billingLoading && <p>Loading billing data…</p>}
 

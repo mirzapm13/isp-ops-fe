@@ -9,15 +9,17 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { EyeIcon, ListRestart, Table2 } from "lucide-react";
+import { EyeIcon, ListRestart, Table2, Plus } from "lucide-react";
 
 const menu = [
-  // { label: "Dashboard", path: "/" },
   { label: "PPPoE Lookup", path: "/subscribers", icon: EyeIcon },
-  // { label: "Routers", path: "/routers" },
   { label: "Matching Table", path: "/matching-table", icon: Table2 },
   { label: "Update Billing", path: "/update-billing", icon: ListRestart },
-  // { label: "Bulk Isolir", path: "/bulk-isolir", icon: Lock },
+  {
+    label: "Create PPPoE Secret",
+    path: "/create-secret",
+    icon: Plus,
+  },
 ];
 
 export function AppSidebar() {

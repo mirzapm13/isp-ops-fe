@@ -9,6 +9,7 @@ export interface ConnectionInfo {
 }
 
 export interface PPPoEMatch {
+  password: string;
   router: RouterInfo;
   secret: boolean;
   status: "ACTIVE" | "INACTIVE";
@@ -27,11 +28,20 @@ export interface ProfileResponse {
 }
 
 export interface CreatePPPoESecretPayload {
-  router_id: string;
+  router: string;
   name: string;
   password: string;
   profile: string;
   service: "pppoe";
-  disabled: boolean;
+  disabled: "yes" | "no";
   comment?: string;
+}
+
+export interface CreatePPPoESecretResponse {
+  result: {
+    status: string;
+    router_id: string;
+    error?: string;
+  };
+  status: string;
 }

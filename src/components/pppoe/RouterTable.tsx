@@ -44,7 +44,7 @@ export function RouterTable({ matches, username }: Props) {
 
   return (
     <>
-      <p className="text-lg mb-2 font-semibold">Data MikroTik</p>
+      <p className="text-lg mb-2 font-semibold">Data MikroTik - {username}</p>
       <div className="border rounded-lg overflow-x-auto">
         <Table className="w-full text-sm">
           <TableHeader className="bg-muted">
@@ -53,6 +53,7 @@ export function RouterTable({ matches, username }: Props) {
               <TableHead className="p-2 text-left">Active</TableHead>
               <TableHead className="p-2 text-left">Secret</TableHead>
               <TableHead className="p-2 text-left">Profile</TableHead>
+              <TableHead className="p-2 text-left">Password</TableHead>
               <TableHead className="p-2 text-left">IP</TableHead>
               <TableHead className="p-2 text-left">Uptime</TableHead>
               <TableHead className="p-2 text-left">Action</TableHead>
@@ -92,6 +93,7 @@ export function RouterTable({ matches, username }: Props) {
                     {m.profile}
                   </Button>
                 </TableCell>
+                <TableCell className="p-2">{m.password}</TableCell>
                 <TableCell className="p-2">{m.connection?.ip ?? "-"}</TableCell>
                 <TableCell className="p-2">
                   {m.connection?.uptime ?? "-"}

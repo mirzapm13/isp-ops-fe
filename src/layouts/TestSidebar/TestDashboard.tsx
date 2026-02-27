@@ -1,6 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export function TestDashboard() {
+export default function TestDashboard() {
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>

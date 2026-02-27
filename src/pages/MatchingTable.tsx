@@ -16,7 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMatchTable } from "@/hooks/useMatchTable";
 
-export function MatchingTable() {
+export default function MatchingTable() {
   const { data, isLoading, error } = useMatchTable();
 
   return (

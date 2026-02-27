@@ -1,6 +1,7 @@
 import { apiFetch, apiPatch, apiPost } from "./client";
 import type {
   CreatePPPoESecretPayload,
+  CreatePPPoESecretResponse,
   PPPoEResponse,
   ProfileResponse,
 } from "@/types/pppoe";
@@ -16,8 +17,9 @@ export function fetchProfiles(router_id: string) {
 export function patchProfile(
   username: string,
   routerId: string,
-  profile: string
+  profile: string,
 ) {
+  console.log(profile);
   return apiPatch(`/api/v1/pppoe/${username}`, {
     router_id: routerId,
     profile: profile,
@@ -41,5 +43,5 @@ export function deleteSecret(username: string, router_id: string) {
 }
 
 export function createPPPoESecret(payload: CreatePPPoESecretPayload) {
-  return apiPost("/api/v1/pppoe/secret", payload);
+  return apiPost<CreatePPPoESecretResponse>("/api/v1/pppoe/secret", payload);
 }

@@ -7,7 +7,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
-export function DashboardLayout() {
+export default function DashboardLayout() {
   return (
     <SidebarProvider>
       {/* <div className="min-h-screen flex"> */}
