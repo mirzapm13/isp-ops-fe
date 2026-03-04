@@ -1,8 +1,8 @@
-import { apiFetch } from "./client";
+import { apiGet } from "@/lib/api";
 import type { BillingResponse } from "@/types/billing";
 
 export function fetchBillingCustomer(ipSecret: string) {
-  return apiFetch<BillingResponse>(`/api/v1/billing/customers/${ipSecret}`);
+  return apiGet<BillingResponse>(`/billing/customers/${ipSecret}`);
 }
 
 export async function uploadBillingFile(file: File) {
@@ -10,11 +10,11 @@ export async function uploadBillingFile(file: File) {
   formData.append("file", file);
 
   const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/v1/billing/import`,
+    `${import.meta.env.VITE_API_BASE_URL}/billing/import`,
     {
       method: "POST",
       body: formData,
-    }
+    },
   );
 
   if (!res.ok) {
@@ -30,11 +30,11 @@ export async function uploadIsolirFile(file: File) {
   formData.append("file", file);
 
   const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/v1/billing/isolir`,
+    `${import.meta.env.VITE_API_BASE_URL}/billing/isolir`,
     {
       method: "POST",
       body: formData,
-    }
+    },
   );
 
   if (!res.ok) {

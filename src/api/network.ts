@@ -1,4 +1,4 @@
-import { apiPost } from "./client";
+import { apiPost } from "@/lib/api";
 
 export interface PingRequest {
   pppoeName: string;
@@ -60,5 +60,5 @@ export async function pingPPPoE({
   router_id,
   count,
 }: PingRequest): Promise<PingResponse> {
-  return apiPost(`/api/v1/pppoe/${pppoeName}/ping`, { router_id, count });
+  return apiPost(`/pppoe/${pppoeName}/ping`, { router_id, count });
 }

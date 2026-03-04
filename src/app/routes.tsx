@@ -5,25 +5,40 @@ import Routers from "@/pages/Routers";
 import MatchingTable from "@/pages/MatchingTable";
 import UpdateBilling from "@/pages/UpdateBilling";
 import BulkIsolir from "@/pages/BulkIsolir";
-import TestLayout from "@/layouts/TestSidebar/TestLayout";
-import TestDashboard from "@/layouts/TestSidebar/TestDashboard";
+// import TestLayout from "@/layouts/TestSidebar/TestLayout";
+// import TestDashboard from "@/layouts/TestSidebar/TestDashboard";
 import CreateSecret from "@/features/pppoe-secret/pages/CreateSecret";
+import { LoginPage } from "@/features/auth/pages/LoginPage";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
+import { PublicRoute } from "@/routes/PublicRoute";
+// import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 export const routes = [
   {
-    path: "Test",
-    element: <TestLayout children={<TestDashboard />} />,
-  },
-  {
-    element: <DashboardLayout />,
+    path: "/",
     children: [
-      { path: "/", element: <Dashboard /> },
-      { path: "/subscribers", element: <Subscribers /> },
-      { path: "/routers", element: <Routers /> },
-      { path: "/matching-table", element: <MatchingTable /> },
-      { path: "/update-billing", element: <UpdateBilling /> },
-      { path: "/bulk-isolir", element: <BulkIsolir /> },
-      { path: "/create-secret", element: <CreateSecret /> },
+      {
+        element: <PublicRoute />,
+        children: [{ path: "login", element: <LoginPage /> }],
+      },
+
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            element: <DashboardLayout />,
+            children: [
+              { index: true, element: <Dashboard /> },
+              { path: "subscribers", element: <Subscribers /> },
+              { path: "routers", element: <Routers /> },
+              { path: "matching-table", element: <MatchingTable /> },
+              { path: "update-billing", element: <UpdateBilling /> },
+              { path: "bulk-isolir", element: <BulkIsolir /> },
+              { path: "create-secret", element: <CreateSecret /> },
+            ],
+          },
+        ],
+      },
     ],
   },
 ];

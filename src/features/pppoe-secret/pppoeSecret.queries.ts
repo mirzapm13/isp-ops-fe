@@ -1,6 +1,6 @@
-import { apiFetch } from "@/api/client";
+import { apiGet } from "@/lib/api";
 import type { Router } from "@/types/router";
 
 export function fetchRouters() {
-  return apiFetch<Router[]>(`/api/v1/routers`);
+  return apiGet<Router[]>(`/routers`);
 }
