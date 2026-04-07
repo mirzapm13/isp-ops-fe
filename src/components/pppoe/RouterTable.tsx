@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/table";
 import { useDeleteSecret } from "@/hooks/useDeleteSecret";
 import { EditModal } from "./EditModal";
+import { useAuth } from "@/features/auth/auth.store";
+import { hasRole } from "@/features/auth/auth.utils";
 
 interface Props {
   matches: PPPoEMatch[];
@@ -41,6 +43,7 @@ export function RouterTable({ matches, username }: Props) {
   const disable = useDisableSecret(username);
   const enable = useEnableSecret(username);
   const deleteSecret = useDeleteSecret(username);
+  const { user } = useAuth();
 
   return (
     <>
@@ -52,11 +55,19 @@ export function RouterTable({ matches, username }: Props) {
               <TableHead className="p-2 text-left">Router</TableHead>
               <TableHead className="p-2 text-left">Active</TableHead>
               <TableHead className="p-2 text-left">Secret</TableHead>
-              <TableHead className="p-2 text-left">Profile</TableHead>
-              <TableHead className="p-2 text-left">Password</TableHead>
-              <TableHead className="p-2 text-left">IP</TableHead>
+              {!hasRole(user, "Technician") && (
+                <TableHead className="p-2 text-left">Profile</TableHead>
+              )}
+              {!hasRole(user, "Technician") && (
+                <TableHead className="p-2 text-left">Password</TableHead>
+              )}
+              {!hasRole(user, "Technician") && (
+                <TableHead className="p-2 text-left">IP</TableHead>
+              )}
               <TableHead className="p-2 text-left">Uptime</TableHead>
-              <TableHead className="p-2 text-left">Action</TableHead>
+              {!hasRole(user, "Technician") && (
+                <TableHead className="p-2 text-left">Action</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,85 +88,99 @@ export function RouterTable({ matches, username }: Props) {
                     </p>
                   </Badge>
                 </TableCell>
-                <TableCell className="p-2">
-                  <Button
-                    size={"sm"}
-                    variant={"outline"}
-                    onClick={() => {
-                      setProfileTarget({
-                        pppoeName: username,
-                        routerId: m.router.id,
-                        currentProfile: m.profile,
-                      });
-                      setProfileOpen(true);
-                    }}
-                  >
-                    {m.profile}
-                  </Button>
-                </TableCell>
-                <TableCell className="p-2">{m.password}</TableCell>
-                <TableCell className="p-2">{m.connection?.ip ?? "-"}</TableCell>
+                {!hasRole(user, "Technician") && (
+                  <TableCell className="p-2">
+                    <Button
+                      size={"sm"}
+                      variant={"outline"}
+                      onClick={() => {
+                        setProfileTarget({
+                          pppoeName: username,
+                          routerId: m.router.id,
+                          currentProfile: m.profile,
+                        });
+                        setProfileOpen(true);
+                      }}
+                    >
+                      {m.profile}
+                    </Button>
+                  </TableCell>
+                )}
+                {!hasRole(user, "Technician") && (
+                  <TableCell className="p-2">{m.password}</TableCell>
+                )}
+                {!hasRole(user, "Technician") && (
+                  <TableCell className="p-2">
+                    {m.connection?.ip ?? "-"}
+                  </TableCell>
+                )}
                 <TableCell className="p-2">
                   {m.connection?.uptime ?? "-"}
                 </TableCell>
-                <TableCell className="p-2 flex space-x-2">
-                  {m.status === "ACTIVE" && (
-                    <>
+                {!hasRole(user, "Technician") && (
+                  <TableCell className="p-2 flex space-x-2">
+                    {m.status === "ACTIVE" && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={
+                            m.status !== "ACTIVE" || deactivate.isPending
+                          }
+                          onClick={() => deactivate.mutate(m.router.id)}
+                        >
+                          {deactivate.isPending
+                            ? "Deactivating…"
+                            : "Deactivate"}
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setPingTarget({
+                              pppoeName: username,
+                              routerId: m.router.id,
+                            });
+                            setPingOpen(true);
+                          }}
+                        >
+                          Ping
+                        </Button>
+                      </>
+                    )}
+
+                    {m.secret ? (
                       <Button
                         size="sm"
                         variant="outline"
-                        disabled={m.status !== "ACTIVE" || deactivate.isPending}
-                        onClick={() => deactivate.mutate(m.router.id)}
+                        disabled={enable.isPending}
+                        onClick={() => enable.mutate(m.router.id)}
                       >
-                        {deactivate.isPending ? "Deactivating…" : "Deactivate"}
+                        {enable.isPending ? "Enabling...." : "Enable"}
                       </Button>
-
+                    ) : (
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => {
-                          setPingTarget({
-                            pppoeName: username,
-                            routerId: m.router.id,
-                          });
-                          setPingOpen(true);
-                        }}
+                        disabled={disable.isPending}
+                        onClick={() => disable.mutate(m.router.id)}
                       >
-                        Ping
+                        {disable.isPending ? "Disabling..." : "Disable"}
                       </Button>
-                    </>
-                  )}
+                    )}
 
-                  {m.secret ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={enable.isPending}
-                      onClick={() => enable.mutate(m.router.id)}
-                    >
-                      {enable.isPending ? "Enabling...." : "Enable"}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={disable.isPending}
-                      onClick={() => disable.mutate(m.router.id)}
-                    >
-                      {disable.isPending ? "Disabling..." : "Disable"}
-                    </Button>
-                  )}
-
-                  {m.status !== "ACTIVE" && m.secret && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => deleteSecret.mutate(m.router.id)}
-                    >
-                      {deleteSecret.isPending ? "Deleting...." : "Delete"}
-                    </Button>
-                  )}
-                </TableCell>
+                    {m.status !== "ACTIVE" && m.secret && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => deleteSecret.mutate(m.router.id)}
+                      >
+                        {deleteSecret.isPending ? "Deleting...." : "Delete"}
+                      </Button>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
