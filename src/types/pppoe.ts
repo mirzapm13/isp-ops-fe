@@ -45,3 +45,8 @@ export interface CreatePPPoESecretResponse {
   };
   status: string;
 }
+
+export interface RemoteResponse {
+  updated: boolean;
+  ip: string;
+}

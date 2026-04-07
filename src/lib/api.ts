@@ -56,12 +56,27 @@ async function fetchWithAuth(
   return res;
 }
 
-export async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetchWithAuth(path);
+export async function apiGet<T>(
+  url: string,
+  params?: Record<string, string | number | boolean | undefined>,
+): Promise<T> {
+  const query = params
+    ? "?" +
+      new URLSearchParams(
+        Object.entries(params)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([_, v]) => v !== undefined)
+          .map(([k, v]) => [k, String(v)]),
+      ).toString()
+    : "";
+
+  const res = await fetchWithAuth(url + query, {
+    method: "GET",
+    credentials: "include",
+  });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => null);
-    throw err ?? { message: "Request failed" };
+    throw new Error("Request failed");
   }
 
   return res.json();

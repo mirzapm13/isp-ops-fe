@@ -19,6 +19,7 @@ import { useDeleteSecret } from "@/hooks/useDeleteSecret";
 import { EditModal } from "./EditModal";
 import { useAuth } from "@/features/auth/auth.store";
 import { hasRole } from "@/features/auth/auth.utils";
+import { useRemoteClient } from "@/hooks/useRemoteClient";
 
 interface Props {
   matches: PPPoEMatch[];
@@ -43,7 +44,29 @@ export function RouterTable({ matches, username }: Props) {
   const disable = useDisableSecret(username);
   const enable = useEnableSecret(username);
   const deleteSecret = useDeleteSecret(username);
+  const remoteClientMutation = useRemoteClient();
   const { user } = useAuth();
+
+  async function openRemoteClient(
+    ip: string,
+    router_id: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutateAsync: (vars: { ip: string; router_id: string }) => Promise<any>,
+  ) {
+    const newTab = window.open("", "_blank");
+
+    try {
+      const res = await mutateAsync({
+        ip,
+        router_id,
+      });
+
+      newTab?.location.assign(`http://${res.ip}`);
+    } catch (err) {
+      newTab?.close();
+      console.error("Failed to open remote client:", err);
+    }
+  }
 
   return (
     <>
@@ -62,7 +85,7 @@ export function RouterTable({ matches, username }: Props) {
                 <TableHead className="p-2 text-left">Password</TableHead>
               )}
               {!hasRole(user, "Technician") && (
-                <TableHead className="p-2 text-left">IP</TableHead>
+                <TableHead className="p-2 text-left">IP (Remote)</TableHead>
               )}
               <TableHead className="p-2 text-left">Uptime</TableHead>
               {!hasRole(user, "Technician") && (
@@ -111,7 +134,24 @@ export function RouterTable({ matches, username }: Props) {
                 )}
                 {!hasRole(user, "Technician") && (
                   <TableCell className="p-2">
-                    {m.connection?.ip ?? "-"}
+                    {m.connection?.ip ? (
+                      <Button
+                        variant={"outline"}
+                        onClick={() => {
+                          if (!m.connection?.ip) return;
+
+                          openRemoteClient(
+                            m.connection.ip,
+                            m.router.id,
+                            remoteClientMutation.mutateAsync,
+                          );
+                        }}
+                      >
+                        {m.connection?.ip}
+                      </Button>
+                    ) : (
+                      "-"
+                    )}
                   </TableCell>
                 )}
                 <TableCell className="p-2">

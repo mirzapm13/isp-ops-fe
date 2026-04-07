@@ -4,6 +4,7 @@ import type {
   CreatePPPoESecretResponse,
   PPPoEResponse,
   ProfileResponse,
+  RemoteResponse,
 } from "@/types/pppoe";
 
 export function fetchSubscriber(username: string) {
@@ -44,4 +45,11 @@ export function deleteSecret(username: string, router_id: string) {
 
 export function createPPPoESecret(payload: CreatePPPoESecretPayload) {
   return apiPost<CreatePPPoESecretResponse>("/pppoe/secret", payload);
+}
+
+export function remoteClient(ip: string, router_id: string) {
+  return apiGet<RemoteResponse>(`/pppoe/remote/`, {
+    ip: ip,
+    router_id: router_id,
+  });
 }
