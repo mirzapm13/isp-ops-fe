@@ -27,9 +27,20 @@ async function fetchWithAuth(
     },
   });
 
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+
+    throw {
+      status: res.status,
+      message: errorData?.detail || "Request failed",
+    };
+  }
+
   // 🔁 If access token expired → try refresh
   if (res.status === 401 && retry) {
     const refreshToken = localStorage.getItem("refresh_token");
+
+    // console.log(res);
 
     if (!refreshToken) {
       throw { message: "Session expired" };
@@ -83,7 +94,6 @@ export async function apiGet<T>(
 }
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  console.log("running");
   const res = await fetchWithAuth(path, {
     method: "POST",
     body: JSON.stringify(body),

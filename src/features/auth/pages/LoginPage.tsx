@@ -11,6 +11,8 @@ import { authService } from "../auth.service";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import logo from "/public/calm-logo.png";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 const schema = z.object({
   username: z.string().min(1),
@@ -45,6 +47,9 @@ export function LoginPage() {
         // ✅ redirect
         navigate("/", { replace: true });
       },
+      onError: async (res) => {
+        toast.error(res.message);
+      },
     });
   };
 
@@ -73,7 +78,9 @@ export function LoginPage() {
             placeholder="Password"
             {...register("password")}
           />
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {mutation.isPending ? <Spinner /> : "Login"}
+          </Button>
         </form>
       </Card>
     </div>

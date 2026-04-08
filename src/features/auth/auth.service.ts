@@ -16,4 +16,10 @@ export const authService = {
   me() {
     return apiGet<User>("/auth/me");
   },
+
+  logout() {
+    // remove tokens (depends on your storage strategy)
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+  },
 };
