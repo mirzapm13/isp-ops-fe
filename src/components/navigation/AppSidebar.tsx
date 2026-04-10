@@ -53,7 +53,7 @@ const menu = [
     // roles: ["Superadmin"],
   },
   {
-    label: "WMS",
+    label: "IMS",
     path: "/work-in-progress",
     icon: Boxes,
     // roles: ["Superadmin"],
