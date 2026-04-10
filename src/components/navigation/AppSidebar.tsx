@@ -12,7 +12,14 @@ import {
 import { useAuth } from "@/features/auth/auth.store";
 // import { hasRole } from "@/features/auth/auth.utils";
 
-import { EyeIcon, ListRestart, Table2, Plus } from "lucide-react";
+import {
+  EyeIcon,
+  ListRestart,
+  Table2,
+  Plus,
+  FileClock,
+  Boxes,
+} from "lucide-react";
 
 const menu = [
   {
@@ -38,6 +45,18 @@ const menu = [
     path: "/create-secret",
     icon: Plus,
     roles: ["Superadmin", "Technician"],
+  },
+  {
+    label: "Sys Log",
+    path: "/work-in-progress",
+    icon: FileClock,
+    // roles: ["Superadmin"],
+  },
+  {
+    label: "WMS",
+    path: "/work-in-progress",
+    icon: Boxes,
+    // roles: ["Superadmin"],
   },
 ];
 

@@ -11,6 +11,7 @@ import CreateSecret from "@/features/pppoe-secret/pages/CreateSecret";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { PublicRoute } from "@/routes/PublicRoute";
+import WorkInProgress from "@/pages/WorkInProgress";
 // import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 export const routes = [
@@ -35,6 +36,7 @@ export const routes = [
               { path: "update-billing", element: <UpdateBilling /> },
               { path: "bulk-isolir", element: <BulkIsolir /> },
               { path: "create-secret", element: <CreateSecret /> },
+              { path: "work-in-progress", element: <WorkInProgress /> },
             ],
           },
         ],
