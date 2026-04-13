@@ -48,7 +48,7 @@ const menu = [
   },
   {
     label: "Sys Log",
-    path: "/work-in-progress",
+    path: "/sys-log",
     icon: FileClock,
     // roles: ["Superadmin"],
   },

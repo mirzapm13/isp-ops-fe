@@ -8,6 +8,7 @@ import BulkIsolir from "@/pages/BulkIsolir";
 // import TestLayout from "@/layouts/TestSidebar/TestLayout";
 // import TestDashboard from "@/layouts/TestSidebar/TestDashboard";
 import CreateSecret from "@/features/pppoe-secret/pages/CreateSecret";
+import SysLog from "@/features/sys-log/pages/SysLog";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { PublicRoute } from "@/routes/PublicRoute";
@@ -36,6 +37,7 @@ export const routes = [
               { path: "update-billing", element: <UpdateBilling /> },
               { path: "bulk-isolir", element: <BulkIsolir /> },
               { path: "create-secret", element: <CreateSecret /> },
+              { path: "sys-log", element: <SysLog /> },
               { path: "work-in-progress", element: <WorkInProgress /> },
             ],
           },
