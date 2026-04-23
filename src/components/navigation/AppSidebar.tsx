@@ -26,7 +26,7 @@ const menu = [
     label: "PPPoE Lookup",
     path: "/subscribers",
     icon: EyeIcon,
-    roles: ["Superadmin", "Technician"],
+    roles: ["Superadmin", "Technician", "PKL"],
   },
   {
     label: "Matching Table",
@@ -44,19 +44,19 @@ const menu = [
     label: "Create PPPoE Secret",
     path: "/create-secret",
     icon: Plus,
-    roles: ["Superadmin", "Technician"],
+    roles: ["Superadmin", "Technician", "PKL"],
   },
   {
     label: "Sys Log",
     path: "/sys-log",
     icon: FileClock,
-    // roles: ["Superadmin"],
+    roles: ["Superadmin"],
   },
   {
     label: "IMS",
     path: "/work-in-progress",
     icon: Boxes,
-    // roles: ["Superadmin"],
+    roles: ["Superadmin"],
   },
 ];
 
