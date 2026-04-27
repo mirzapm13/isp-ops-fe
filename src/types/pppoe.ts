@@ -9,16 +9,25 @@ export interface ConnectionInfo {
 }
 
 export interface PPPoEMatch {
+  name: string;
   password: string;
+  comment?: string;
   router: RouterInfo;
   secret: boolean;
   status: "ACTIVE" | "INACTIVE";
   profile: string;
   connection: ConnectionInfo | null;
+  matched_mac?: string;
+  matched_by?: "caller-id" | "last-caller-id";
 }
 
 export interface PPPoEResponse {
   username: string;
+  matches: PPPoEMatch[];
+}
+
+export interface PPPoEMacResponse {
+  mac_address: string;
   matches: PPPoEMatch[];
 }
 

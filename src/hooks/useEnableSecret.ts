@@ -9,9 +9,11 @@ export function useEnableSecret(username: string) {
     mutationFn: (router_id: string) => enableSecret(username, router_id),
 
     onSuccess: () => {
-      // 👇 THIS IS THE KEY PART
       queryClient.invalidateQueries({
         queryKey: ["subscriber", username],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["subscriber-mac"],
       });
 
       toast.success("PPPoE secret enabled", {

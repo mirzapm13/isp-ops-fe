@@ -2,6 +2,7 @@ import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import type {
   CreatePPPoESecretPayload,
   CreatePPPoESecretResponse,
+  PPPoEMacResponse,
   PPPoEResponse,
   ProfileResponse,
   RemoteResponse,
@@ -9,6 +10,10 @@ import type {
 
 export function fetchSubscriber(username: string) {
   return apiGet<PPPoEResponse>(`/pppoe/${username}`);
+}
+
+export function fetchSubscriberByMac(address: string) {
+  return apiGet<PPPoEMacResponse>("/pppoe/mac", { address });
 }
 
 export function fetchProfiles(router_id: string) {
