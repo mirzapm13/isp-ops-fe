@@ -19,6 +19,7 @@ import {
   Plus,
   FileClock,
   Boxes,
+  ScanSearch,
 } from "lucide-react";
 
 const menu = [
@@ -26,6 +27,12 @@ const menu = [
     label: "PPPoE Lookup",
     path: "/subscribers",
     icon: EyeIcon,
+    roles: ["Superadmin", "Technician", "PKL"],
+  },
+  {
+    label: "Search by MAC",
+    path: "/subscribers/mac",
+    icon: ScanSearch,
     roles: ["Superadmin", "Technician", "PKL"],
   },
   {
