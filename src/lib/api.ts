@@ -2,6 +2,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 let accessToken: string | null = null;
 let logoutHandler: (() => void) | null = null;
+let refreshPromise: Promise<string> | null = null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
@@ -9,6 +10,38 @@ export function setAccessToken(token: string | null) {
 
 export function registerLogoutHandler(handler: () => void) {
   logoutHandler = handler;
+}
+
+async function getRefreshedAccessToken(): Promise<string> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  if (!refreshToken) {
+    throw { status: 401, message: "Session expired" };
+  }
+
+  refreshPromise = fetch(`${API_BASE}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  })
+    .then(async (refreshRes) => {
+      if (!refreshRes.ok) {
+        throw { status: refreshRes.status, message: "Session expired" };
+      }
+
+      const data = (await refreshRes.json()) as { access_token: string };
+      setAccessToken(data.access_token);
+      return data.access_token;
+    })
+    .finally(() => {
+      refreshPromise = null;
+    });
+
+  return refreshPromise;
 }
 
 async function fetchWithAuth(
@@ -27,43 +60,26 @@ async function fetchWithAuth(
     },
   });
 
+  // Access tokens expire normally. Refresh once, then retry the request.
+  if (res.status === 401 && retry) {
+    try {
+      await getRefreshedAccessToken();
+      return fetchWithAuth(path, options, false);
+    } catch {
+      if (logoutHandler) logoutHandler();
+      throw { status: 401, message: "Session expired" };
+    }
+  }
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
 
     throw {
       status: res.status,
-      message: errorData?.detail || "Request failed",
+      message: errorData?.detail || errorData?.message || "Request failed",
     };
   }
 
-  // 🔁 If access token expired → try refresh
-  if (res.status === 401 && retry) {
-    const refreshToken = localStorage.getItem("refresh_token");
-
-    // console.log(res);
-
-    if (!refreshToken) {
-      throw { message: "Session expired" };
-    }
-
-    const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    });
-
-    if (!refreshRes.ok) {
-      if (logoutHandler) logoutHandler();
-      throw { message: "Session expired" };
-    }
-
-    const data = await refreshRes.json();
-
-    setAccessToken(data.access_token);
-
-    // 🔁 Retry original request once
-    return fetchWithAuth(path, options, false);
-  }
   return res;
 }
 

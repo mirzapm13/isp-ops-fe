@@ -47,24 +47,62 @@ export function RouterTable({ matches, username }: Props) {
   const remoteClientMutation = useRemoteClient();
   const { user } = useAuth();
 
-  async function openRemoteClient(
-    ip: string,
-    router_id: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutateAsync: (vars: { ip: string; router_id: string }) => Promise<any>,
-  ) {
-    const newTab = window.open("", "_blank");
+  // async function openRemoteClient(
+  //   ip: string,
+  //   router_id: string,
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   mutateAsync: (vars: { ip: string; router_id: string }) => Promise<any>,
+  // ) {
+  //   // const newTab = window.open("", "_blank");
+  //   // const newTab = window.open("about:blank", "_blank");
+
+  //   try {
+  //     const res = await mutateAsync({
+  //       ip,
+  //       router_id,
+  //     });
+
+  //     console.log(res);
+
+  //     // newTab?.location.assign(`http://${res.ip}`);
+
+  //     // if (newTab) {
+  //     //   newTab.location.href = `http://${res.ip}`;
+  //     // }
+
+  //     window.open(`http://${res.ip}`, "_self");
+  //   } catch (err) {
+  //     // newTab?.close();
+  //     console.error("Failed to open remote client:", err);
+  //   }
+  // }
+
+  async function openRemoteClient(ip: string, router_id: string) {
+    const newTab = window.open("about:blank", "_blank");
+
+    if (!newTab) {
+      alert("Popup blocked");
+      return;
+    }
+
+    // Immediately write something → keeps tab "alive"
+    newTab.document.write(`
+    <html>
+      <head><title>Connecting...</title></head>
+      <body>
+        <p>Connecting to router...</p>
+      </body>
+    </html>
+  `);
 
     try {
-      const res = await mutateAsync({
-        ip,
-        router_id,
-      });
+      const res = await remoteClientMutation.mutateAsync({ ip, router_id });
 
-      newTab?.location.assign(`http://${res.ip}`);
+      // Now navigate
+      newTab.location.href = `http://${res.ip}`;
     } catch (err) {
-      newTab?.close();
-      console.error("Failed to open remote client:", err);
+      newTab.document.body.innerHTML = "Failed to connect";
+      console.error(err);
     }
   }
 
@@ -158,7 +196,7 @@ export function RouterTable({ matches, username }: Props) {
                           openRemoteClient(
                             m.connection.ip,
                             m.router.id,
-                            remoteClientMutation.mutateAsync,
+                            // remoteClientMutation.mutateAsync,
                           );
                         }}
                       >
