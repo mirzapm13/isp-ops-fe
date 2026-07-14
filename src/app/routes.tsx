@@ -14,12 +14,14 @@ import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { PublicRoute } from "@/routes/PublicRoute";
 import WorkInProgress from "@/pages/WorkInProgress";
+import TelegramForm from "@/features/telegram-form/pages/TelegramForm";
 // import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 export const routes = [
   {
     path: "/",
     children: [
+      { path: "telegram/form", element: <TelegramForm /> },
       {
         element: <PublicRoute />,
         children: [{ path: "login", element: <LoginPage /> }],
