@@ -1,4 +1,6 @@
 import type { BillingRow } from "@/types/billing";
+import { Button } from "../ui/button";
+import { formatIndonesianNumber } from "@/lib/intl_wa";
 // import { Badge } from "@/components/ui/badge";
 // import { hasRole } from "@/features/auth/auth.utils";
 // import { useAuth } from "@/features/auth/auth.store";
@@ -15,6 +17,13 @@ interface Props {
 
 export function BillingTable({ rows }: Props) {
   // const { user } = useAuth();
+
+  const openWA = (phoneNumber: string) => {
+    window.open(
+      `https://wa.me/${formatIndonesianNumber(phoneNumber)}`,
+      "noopener,noreferrer",
+    );
+  };
 
   if (rows.length === 0) {
     return (
@@ -55,7 +64,18 @@ export function BillingTable({ rows }: Props) {
                 <td className="p-2">{row.id_pelanggan}</td>
                 <td className="p-2">{row.nama_pelanggan}</td>
                 <td className="p-2">{row.alamat}</td>
-                <td className="p-2">{row.tlp}</td>
+                <td className="p-2 flex gap-2 items-center">
+                  {row.tlp}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      openWA(row.tlp);
+                    }}
+                  >
+                    WA
+                  </Button>
+                </td>
                 <td className="p-2">{row.nama_langganan}</td>
                 <td className="p-2">{row.ip_secret}</td>
                 <td className="p-2">Rp {row.harga.toLocaleString("id-ID")}</td>

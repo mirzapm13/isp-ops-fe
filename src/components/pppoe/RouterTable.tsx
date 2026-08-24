@@ -125,6 +125,7 @@ export function RouterTable({ matches, username }: Props) {
               )}
               <TableHead className="p-2 text-left">Uptime</TableHead>
               <TableHead className="p-2 text-left">Action</TableHead>
+              <TableHead className="p-2 text-left">MAC Address</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -271,6 +272,7 @@ export function RouterTable({ matches, username }: Props) {
                       </Button>
                     )}
                 </TableCell>
+                <TableCell>{m.matched_mac}</TableCell>
               </TableRow>
             ))}
           </TableBody>
