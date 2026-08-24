@@ -4,6 +4,8 @@ export interface BillingRow {
   ip_secret: string;
   nama_pelanggan: string;
   nama_langganan: string;
+  alamat: string;
+  tlp: string;
   harga: number;
   status_langganan: string;
   jatuh_tempo: string;
