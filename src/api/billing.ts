@@ -1,8 +1,24 @@
 import { apiGet } from "@/lib/api";
-import type { BillingResponse } from "@/types/billing";
+import type { BillingResponse, BillingPaginatedResponse } from "@/types/billing";
 
 export function fetchBillingCustomer(ipSecret: string) {
   return apiGet<BillingResponse>(`/billing/customers/${ipSecret}`);
+}
+
+export function fetchBillingCustomersPaginated(params: {
+  search?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const query = new URLSearchParams();
+  if (params.search) query.append("search", params.search);
+  if (params.page) query.append("page", String(params.page));
+  if (params.limit) query.append("limit", String(params.limit));
+
+  const queryString = query.toString();
+  return apiGet<BillingPaginatedResponse>(
+    `/billing/customers${queryString ? `?${queryString}` : ""}`
+  );
 }
 
 export async function uploadBillingFile(file: File) {

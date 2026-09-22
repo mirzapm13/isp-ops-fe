@@ -2,6 +2,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import Dashboard from "@/pages/Dashboard";
 import Subscribers from "@/pages/Subscribers";
 import SubscribersByMac from "@/pages/SubscribersByMac";
+import BillingCustomers from "@/pages/BillingCustomers";
 import Routers from "@/pages/Routers";
 import MatchingTable from "@/pages/MatchingTable";
 import UpdateBilling from "@/pages/UpdateBilling";
@@ -36,6 +37,7 @@ export const routes = [
               { index: true, element: <Dashboard /> },
               { path: "subscribers", element: <Subscribers /> },
               { path: "subscribers/mac", element: <SubscribersByMac /> },
+              { path: "billing/customers", element: <BillingCustomers /> },
               { path: "routers", element: <Routers /> },
               { path: "matching-table", element: <MatchingTable /> },
               { path: "update-billing", element: <UpdateBilling /> },

@@ -21,3 +21,13 @@ export interface BillingResponse {
   count: number;
   data: BillingRow[];
 }
+
+export interface BillingPaginatedResponse {
+  data: BillingRow[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}

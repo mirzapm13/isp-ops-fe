@@ -20,6 +20,7 @@ import {
   FileClock,
   Boxes,
   ScanSearch,
+  ReceiptText,
 } from "lucide-react";
 
 const menu = [
@@ -33,6 +34,12 @@ const menu = [
     label: "Search by MAC",
     path: "/subscribers/mac",
     icon: ScanSearch,
+    roles: ["Superadmin", "Technician", "PKL"],
+  },
+  {
+    label: "Billing Customers",
+    path: "/billing/customers",
+    icon: ReceiptText,
     roles: ["Superadmin", "Technician", "PKL"],
   },
   {
