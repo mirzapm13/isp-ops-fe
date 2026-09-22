@@ -7,5 +7,8 @@ export function useSubscriberLookupByMac(address: string) {
     queryFn: () => fetchSubscriberByMac(address),
     enabled: !!address,
     retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 }
