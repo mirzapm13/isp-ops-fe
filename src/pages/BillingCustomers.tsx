@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ServerSideTable, {
   type ServerSideColumn,
 } from "@/components/common/ServerSideTable";
@@ -38,7 +39,22 @@ export default function BillingCustomers() {
     {
       key: "ip_secret",
       header: "IP / Secret",
-      cell: (row) => row.ip_secret || "-",
+      cell: (row) =>
+        row.ip_secret ? (
+          <Link
+            to={`/subscribers?query=${encodeURIComponent(row.ip_secret)}`}
+            className="text-primary font-medium hover:underline"
+          >
+            {row.ip_secret}
+          </Link>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      key: "alamat",
+      header: "Alamat",
+      cell: (row) => row.alamat || "-",
     },
     {
       key: "tlp",
@@ -68,11 +84,6 @@ export default function BillingCustomers() {
     //   header: "Router",
     //   cell: (row) => row.nama_router || "-",
     // },
-    {
-      key: "alamat",
-      header: "Alamat",
-      cell: (row) => row.alamat || "-",
-    },
   ];
 
   return (
