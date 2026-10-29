@@ -49,15 +49,18 @@ async function fetchWithAuth(
   options: RequestInit = {},
   retry = true,
 ): Promise<Response> {
+  const isFormData = options.body instanceof FormData;
+  const headers: Record<string, string> = {
+    ...(!isFormData && { "Content-Type": "application/json" }),
+    ...((options.headers as Record<string, string>) || {}),
+    ...(accessToken && {
+      Authorization: `Bearer ${accessToken}`,
+    }),
+  };
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-      ...(accessToken && {
-        Authorization: `Bearer ${accessToken}`,
-      }),
-    },
+    headers,
   });
 
   // Access tokens expire normally. Refresh once, then retry the request.
@@ -123,6 +126,28 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const res = await fetchWithAuth(path, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => null);
+    throw err ?? { message: "Upload failed" };
+  }
+
+  return res.json();
+}
+
+export async function apiGetBlob(path: string): Promise<Blob> {
+  const res = await fetchWithAuth(path, {
+    method: "GET",
+  });
+
+  return res.blob();
+}
+
 export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
   const res = await fetchWithAuth(path, {
     method: "PATCH",
@@ -136,3 +161,4 @@ export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
 
   return res.json();
 }
+

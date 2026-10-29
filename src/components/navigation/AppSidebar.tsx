@@ -21,6 +21,7 @@ import {
   Boxes,
   ScanSearch,
   ReceiptText,
+  Send,
 } from "lucide-react";
 
 const menu = [
@@ -59,6 +60,12 @@ const menu = [
     path: "/create-secret",
     icon: Plus,
     roles: ["Superadmin", "Technician", "PKL"],
+  },
+  {
+    label: "WA Broadcast",
+    path: "/wa-broadcast",
+    icon: Send,
+    roles: ["Superadmin"],
   },
   {
     label: "Sys Log",

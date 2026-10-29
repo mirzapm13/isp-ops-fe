@@ -16,6 +16,7 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { PublicRoute } from "@/routes/PublicRoute";
 import WorkInProgress from "@/pages/WorkInProgress";
 import TelegramForm from "@/features/telegram-form/pages/TelegramForm";
+import WaBroadcastPage from "@/features/wa-broadcast/pages/WaBroadcastPage";
 // import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 export const routes = [
@@ -43,6 +44,7 @@ export const routes = [
               { path: "update-billing", element: <UpdateBilling /> },
               { path: "bulk-isolir", element: <BulkIsolir /> },
               { path: "create-secret", element: <CreateSecret /> },
+              { path: "wa-broadcast", element: <WaBroadcastPage /> },
               { path: "sys-log", element: <SysLog /> },
               { path: "work-in-progress", element: <WorkInProgress /> },
             ],
@@ -52,3 +54,4 @@ export const routes = [
     ],
   },
 ];
+
