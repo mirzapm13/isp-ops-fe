@@ -68,7 +68,7 @@ export default function WaBroadcastPage() {
   const stopMutation = useStopWaBroadcast();
 
   const [uploadData, setUploadData] = useState<WaUploadResponse | null>(null);
-  const [selectedPreset, setSelectedPreset] = useState<string>("isolir_info");
+  const [selectedPreset, setSelectedPreset] = useState<string>("");
 
   // Template & Mapping state
   const [templateName, setTemplateName] = useState("");
@@ -91,24 +91,10 @@ export default function WaBroadcastPage() {
   const runQuery = useWaBroadcastRun(activeRunId);
   const historyQuery = useWaBroadcastRuns(historyPage, 15);
 
-  // Initialize default template when templates load
+  // Initialize default language and active run when templates load
   useEffect(() => {
     if (templatesQuery.data) {
-      const tplMap = templatesQuery.data.templates;
-      const defaultKey = tplMap["isolir_info"]
-        ? "isolir_info"
-        : Object.keys(tplMap)[0] || "Custom / Manual";
-      setSelectedPreset(defaultKey);
-
-      if (defaultKey !== "Custom / Manual" && tplMap[defaultKey]) {
-        const preset = tplMap[defaultKey];
-        setTemplateName(preset.name);
-        setLanguageCode(
-          preset.language_code || templatesQuery.data.default_language_code
-        );
-      } else {
-        setLanguageCode(templatesQuery.data.default_language_code);
-      }
+      setLanguageCode(templatesQuery.data.default_language_code || "id");
 
       if (templatesQuery.data.active_run_id && activeRunId === null) {
         setActiveRunId(templatesQuery.data.active_run_id);
@@ -137,6 +123,7 @@ export default function WaBroadcastPage() {
         setPreviewRow(data.first_data_row ?? 4);
 
         if (
+          selectedPreset &&
           selectedPreset !== "Custom / Manual" &&
           data.preset_mappings[selectedPreset]
         ) {
@@ -402,7 +389,7 @@ export default function WaBroadcastPage() {
                     disabled={isRunning}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select preset" />
+                      <SelectValue placeholder="Select template" />
                     </SelectTrigger>
                     <SelectContent>
                       {presetOptions.map((key) => {
