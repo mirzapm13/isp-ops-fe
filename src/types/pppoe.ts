@@ -14,7 +14,7 @@ export interface PPPoEMatch {
   comment?: string;
   router: RouterInfo;
   secret: boolean;
-  status: "ACTIVE" | "INACTIVE";
+  status: "ACTIVE" | "INACTIVE" | "UNREACHABLE";
   profile: string;
   connection: ConnectionInfo | null;
   matched_mac?: string;
