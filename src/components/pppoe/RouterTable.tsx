@@ -20,6 +20,7 @@ import { EditModal } from "./EditModal";
 import { useAuth } from "@/features/auth/auth.store";
 import { hasPermission } from "@/features/auth/auth.utils";
 import { useRemoteClient } from "@/hooks/useRemoteClient";
+import { Card, CardHeader } from "../ui/card";
 
 interface Props {
   matches: PPPoEMatch[];
@@ -46,36 +47,6 @@ export function RouterTable({ matches, username }: Props) {
   const deleteSecret = useDeleteSecret(username);
   const remoteClientMutation = useRemoteClient();
   const { user } = useAuth();
-
-  // async function openRemoteClient(
-  //   ip: string,
-  //   router_id: string,
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   mutateAsync: (vars: { ip: string; router_id: string }) => Promise<any>,
-  // ) {
-  //   // const newTab = window.open("", "_blank");
-  //   // const newTab = window.open("about:blank", "_blank");
-
-  //   try {
-  //     const res = await mutateAsync({
-  //       ip,
-  //       router_id,
-  //     });
-
-  //     console.log(res);
-
-  //     // newTab?.location.assign(`http://${res.ip}`);
-
-  //     // if (newTab) {
-  //     //   newTab.location.href = `http://${res.ip}`;
-  //     // }
-
-  //     window.open(`http://${res.ip}`, "_self");
-  //   } catch (err) {
-  //     // newTab?.close();
-  //     console.error("Failed to open remote client:", err);
-  //   }
-  // }
 
   async function openRemoteClient(ip: string, router_id: string) {
     const newTab = window.open("about:blank", "_blank");
@@ -108,6 +79,22 @@ export function RouterTable({ matches, username }: Props) {
 
   return (
     <>
+      <div>
+        {matches.map(
+          (m) =>
+            m.status === "UNREACHABLE" && (
+              <Card className="border-2 border-red-300">
+                <CardHeader className="p-3">
+                  <p className="text-red-400">
+                    Can't reach {m.router.name}, please check the PoP
+                    connection.
+                  </p>
+                </CardHeader>
+              </Card>
+            ),
+        )}
+      </div>
+
       <p className="text-lg mb-2 font-semibold">Data MikroTik - {username}</p>
       <div className="border rounded-lg overflow-x-auto">
         <Table className="w-full text-sm">
@@ -129,152 +116,156 @@ export function RouterTable({ matches, username }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {matches.map((m) => (
-              <TableRow key={m.router.id} className="border-t">
-                <TableCell className="p-2">{m.router.name}</TableCell>
-                <TableCell className="p-2">
-                  <Badge
-                    variant={m.status === "ACTIVE" ? "default" : "destructive"}
-                  >
-                    <p className="text-white">{m.status}</p>
-                  </Badge>
-                </TableCell>
-                <TableCell className="p-2">
-                  <Badge variant={m.secret ? "destructive" : "default"}>
-                    <p className="text-white">
-                      {m.secret ? <>DISABLED</> : <>ENABLED</>}
-                    </p>
-                  </Badge>
-                </TableCell>
-                <TableCell className="p-2">
-                  {hasPermission(user, "change-profile") ? (
-                    <Button
-                      size={"sm"}
-                      variant={"outline"}
-                      onClick={() => {
-                        setProfileTarget({
-                          pppoeName: username,
-                          routerId: m.router.id,
-                          currentProfile: m.profile,
-                        });
-                        setProfileOpen(true);
-                      }}
-                    >
-                      {m.profile}
-                    </Button>
-                  ) : (
-                    <>{m.profile}</>
-                  )}
-
-                  {/* <Button
-                    size={"sm"}
-                    variant={"outline"}
-                    onClick={() => {
-                      setProfileTarget({
-                        pppoeName: username,
-                        routerId: m.router.id,
-                        currentProfile: m.profile,
-                      });
-                      setProfileOpen(true);
-                    }}
-                  >
-                    {m.profile}
-                  </Button> */}
-                </TableCell>
-
-                {hasPermission(user, "see_password") && (
-                  <TableCell className="p-2">{m.password}</TableCell>
-                )}
-
-                {hasPermission(user, "see_password") && (
+            {matches.map((m) =>
+              m.status === "UNREACHABLE" ? (
+                <TableRow key={m.router.id} className="border-t">
+                  <TableCell className="p-2">{m.router.name}</TableCell>
+                  <TableCell colSpan={8} className="p-2">
+                    <div className="flex justify-center align-middle">
+                      <Badge variant="destructive" className="text-white">
+                        {m.status}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow key={m.router.id} className="border-t">
+                  <TableCell className="p-2">{m.router.name}</TableCell>
                   <TableCell className="p-2">
-                    {m.connection?.ip ? (
+                    <Badge
+                      variant={
+                        m.status === "ACTIVE" ? "default" : "destructive"
+                      }
+                    >
+                      <p className="text-white">{m.status}</p>
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="p-2">
+                    <Badge variant={m.secret ? "destructive" : "default"}>
+                      <p className="text-white">
+                        {m.secret ? <>DISABLED</> : <>ENABLED</>}
+                      </p>
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="p-2">
+                    {hasPermission(user, "change-profile") ? (
                       <Button
+                        size={"sm"}
                         variant={"outline"}
                         onClick={() => {
-                          if (!m.connection?.ip) return;
-
-                          openRemoteClient(
-                            m.connection.ip,
-                            m.router.id,
-                            // remoteClientMutation.mutateAsync,
-                          );
-                        }}
-                      >
-                        {m.connection?.ip}
-                      </Button>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                )}
-
-                <TableCell className="p-2">
-                  {m.connection?.uptime ?? "-"}
-                </TableCell>
-                <TableCell className="p-2 flex space-x-2">
-                  {m.status === "ACTIVE" && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={m.status !== "ACTIVE" || deactivate.isPending}
-                        onClick={() => deactivate.mutate(m.router.id)}
-                      >
-                        {deactivate.isPending ? "Deactivating…" : "Deactivate"}
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setPingTarget({
+                          setProfileTarget({
                             pppoeName: username,
                             routerId: m.router.id,
+                            currentProfile: m.profile,
                           });
-                          setPingOpen(true);
+                          setProfileOpen(true);
                         }}
                       >
-                        Ping
+                        {m.profile}
                       </Button>
-                    </>
+                    ) : (
+                      <>{m.profile}</>
+                    )}
+                  </TableCell>
+
+                  {hasPermission(user, "see_password") && (
+                    <TableCell className="p-2">{m.password}</TableCell>
                   )}
 
-                  {m.secret ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={enable.isPending}
-                      onClick={() => enable.mutate(m.router.id)}
-                    >
-                      {enable.isPending ? "Enabling...." : "Enable"}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={disable.isPending}
-                      onClick={() => disable.mutate(m.router.id)}
-                    >
-                      {disable.isPending ? "Disabling..." : "Disable"}
-                    </Button>
+                  {hasPermission(user, "see_password") && (
+                    <TableCell className="p-2">
+                      {m.connection?.ip ? (
+                        <Button
+                          variant={"outline"}
+                          onClick={() => {
+                            if (!m.connection?.ip) return;
+
+                            openRemoteClient(
+                              m.connection.ip,
+                              m.router.id,
+                              // remoteClientMutation.mutateAsync,
+                            );
+                          }}
+                        >
+                          {m.connection?.ip}
+                        </Button>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
                   )}
 
-                  {hasPermission(user, "delete_secret") &&
-                    m.status !== "ACTIVE" &&
-                    m.secret && (
+                  <TableCell className="p-2">
+                    {m.connection?.uptime ?? "-"}
+                  </TableCell>
+                  <TableCell className="p-2 flex space-x-2">
+                    {m.status === "ACTIVE" && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={
+                            m.status !== "ACTIVE" || deactivate.isPending
+                          }
+                          onClick={() => deactivate.mutate(m.router.id)}
+                        >
+                          {deactivate.isPending
+                            ? "Deactivating…"
+                            : "Deactivate"}
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setPingTarget({
+                              pppoeName: username,
+                              routerId: m.router.id,
+                            });
+                            setPingOpen(true);
+                          }}
+                        >
+                          Ping
+                        </Button>
+                      </>
+                    )}
+
+                    {m.secret ? (
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => deleteSecret.mutate(m.router.id)}
+                        disabled={enable.isPending}
+                        onClick={() => enable.mutate(m.router.id)}
                       >
-                        {deleteSecret.isPending ? "Deleting...." : "Delete"}
+                        {enable.isPending ? "Enabling...." : "Enable"}
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={disable.isPending}
+                        onClick={() => disable.mutate(m.router.id)}
+                      >
+                        {disable.isPending ? "Disabling..." : "Disable"}
                       </Button>
                     )}
-                </TableCell>
-                <TableCell>{m.matched_mac}</TableCell>
-              </TableRow>
-            ))}
+
+                    {hasPermission(user, "delete_secret") &&
+                      m.status !== "ACTIVE" &&
+                      m.secret && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteSecret.mutate(m.router.id)}
+                        >
+                          {deleteSecret.isPending ? "Deleting...." : "Delete"}
+                        </Button>
+                      )}
+                  </TableCell>
+                  <TableCell>{m.matched_mac}</TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </div>
