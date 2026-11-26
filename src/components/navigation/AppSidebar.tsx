@@ -41,7 +41,7 @@ const menu = [
     label: "Billing Customers",
     path: "/billing/customers",
     icon: ReceiptText,
-    roles: ["Superadmin", "Technician", "PKL"],
+    roles: ["Superadmin", "Technician", "PKL", "Admin BMT"],
   },
   {
     label: "Matching Table",
